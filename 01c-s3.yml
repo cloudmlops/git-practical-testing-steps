@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  AWS CloudFormation Sample Template S3_Website_Bucket_With_Retain_On_Delete:
+  Template showing how to create a publicly accessible S3 bucket with a deletion policy of retain on delete.
+  This template creates an S3 bucket that will NOT be deleted when the stack is deleted.
+  Create a new stack > validate resource creation > Delete this stack > The Logical ID which has DeletionPolicy will have status DELETE_SKIPPED
+
+# aws cloudformation create-stack --stack-name s3-01c-cli-stack --template-body 'file://01c-S3.yml' --parameters ParameterKey=BucketNameParam,ParameterValue=test-cf-cli-bucket ParameterKey=EnvironmentName,ParameterValue=test
+
+Parameters:
+  BucketNameParam:
+    Description: The S3 Bucket Name (only lowercase characters supported)
+    Type: String
+  EnvironmentName:
+    Description: SDLC Environment Value e.g dev/qa/prod.
+    Type: String
+
+# Intrinsic Functions
+Resources:
+  S3Bucket:
+    # If you don't want CF to delete the resources if your stack is deleted, use this option.
+    DeletionPolicy: Retain
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join [ "-", [ !Ref EnvironmentName, !Ref BucketNameParam ] ] 
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index456.html
+        ErrorDocument: error456.html
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt S3Bucket.WebsiteURL
+    Description: URL for website hosted on S3
+  S3BucketSecureURL:
+    Value: !Join [ "", [ 'https://', !GetAtt S3Bucket.DomainName ] ]
+    Description: Name of S3 bucket to hold website content
+
