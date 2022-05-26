@@ -77,7 +77,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
+          Value: !Sub ${EnvironmentName}-Public-Subnet-(AZ2)
 
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
@@ -88,7 +88,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
+          Value: !Sub ${EnvironmentName}-Private-Subnet-(AZ1)
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
